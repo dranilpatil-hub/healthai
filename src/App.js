@@ -344,7 +344,7 @@ export default function HealthAI() {
           messages: [{ role: "user", content: `Hello, I am ${patient.name}. I'd like to have my symptoms assessed.` }]
         })
       });
-      const data = await res.json();
+      const data = await res.json();        if (data.error) throw new Error(data.error.message || 'API error');
       const text = data.content?.map(b => b.type === "text" ? b.text : "").join("") || "Hello! I'm ready to help. What symptoms are you experiencing today?";
       setMessages([{ role: "ai", content: text }]);
     } catch {
@@ -411,8 +411,8 @@ export default function HealthAI() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 600, system: buildSystemPrompt(patient), messages: apiMsgs })
       });
-      const data = await res.json();
-      const aiText = data.content?.map(b => b.type === "text" ? b.text : "").join("") || "Could you tell me more?";
+      const data = await res.json();        if (data.error) throw new Error(data.error.message || 'API error');
+      const aiText = data.content?.map(b => b.type === "text" ? b.text : "").join("") || "I didn't receive a response. Please try again.";
       const fullMsgs = [...newMsgs, { role: "ai", content: aiText }];
       setMessages(fullMsgs);
       if (aiText.includes("READY_TO_GENERATE_REPORT")) {
@@ -421,7 +421,7 @@ export default function HealthAI() {
         setTimeout(() => generateReport(cleanMsgs), 800);
       }
     } catch {
-      setMessages(prev => [...prev, { role: "ai", content: "I had a connection issue. Could you repeat that?" }]);
+      setMessages(prev => [...prev, { role: "ai", content: "I'm unable to respond right now. Please try again in a moment." }]);
     }
     setLoading(false);
   }, [input, messages, loading, patient, generateReport]);

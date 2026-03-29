@@ -12,7 +12,7 @@ PATIENT PROFILE:
 - Current Medications: ${patient.medications || "None reported"}
 - Allergies: ${patient.allergies || "None reported"}
 
-YOUR ROLE:
+YOUR ROLE
 You conduct professional, empathetic symptom interviews across ALL medical domains — not limited to pain. You handle cardiology, neurology, gastroenterology, dermatology, pulmonology, psychiatry, endocrinology, infectious disease, musculoskeletal, reproductive health, and more.
 
 INTERVIEW RULES:
@@ -334,7 +334,7 @@ export default function HealthAI() {
     setScreen("chat");
     setLoading(true);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -359,7 +359,7 @@ export default function HealthAI() {
     setGeneratingReport(true);
     const transcript = msgs.map(m => `${m.role === "ai" ? "HealthAI" : patient.name}: ${m.content}`).join("\n\n");
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -406,7 +406,7 @@ export default function HealthAI() {
     setLoading(true);
     try {
       const apiMsgs = newMsgs.map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.content }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 600, system: buildSystemPrompt(patient), messages: apiMsgs })
